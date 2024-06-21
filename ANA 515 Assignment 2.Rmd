@@ -1,0 +1,109 @@
+---
+title: "ANA 515 Assignment 2"
+author: "Chester Kayonga"
+date: "2024-06-12"
+output:
+  html_document: default
+  word_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, echo=TRUE}
+# Load the dataset using the function read.csv
+url <- "https://raw.githubusercontent.com/fivethirtyeight/data/master/nba-draft-2015/historical_projections.csv"
+Nba2015draft_data <- read.csv(url)
+```
+
+```{r, include=TRUE}
+# library for data manipulation
+library(dplyr)
+```
+
+```{r echo=TRUE}
+# Filter the dataset to include only rows where Projected.SPM is greater than or equal to 0.2
+filtered_data <- Nba2015draft_data %>%
+  filter(Projected.SPM >= 0.2)
+# Rename columns for better readability
+cleaned_data <- filtered_data %>%
+  rename(
+    Projected_SPM = Projected.SPM,
+    Superstar_Prob = Superstar,
+    Starter_Prob = Starter,
+    Role_Player_Prob = Role.Player,
+    Bust_Prob = Bust
+  )
+
+# Display the first few rows of the cleaned dataset
+head(cleaned_data)
+```
+# Characteristics of the Data
+
+This dataframe has `r nrow(cleaned_data)` rows and `r ncol(cleaned_data)` columns. The names of the columns and a brief description of each are in the table below:
+
+```{r, echo=TRUE}
+# Load necessary library for table creation
+library(knitr) 
+
+# Create a dataframe for column descriptions
+column_descriptions <- data.frame(
+  Column_Name = c("Player", "College", "Year", "Position", "Height", "Wingspan", 
+                  "Projected_SPM", "Superstar_Prob", "Starter_Prob", 
+                  "Role_Player_Prob", "Bust_Prob"),
+  Description = c("Player's Name", "College attended", "Year of draft", "Position played", 
+                  "Height in inches", "Wingspan in inches", 
+                  "Projected Statistical Plus/Minus", "Probability of becoming a Superstar", 
+                  "Probability of becoming a Starter", "Probability of becoming a Role Player", 
+                  "Probability of becoming a Bust")
+)
+
+# Display the table
+kable(column_descriptions, caption = "Column Names and Descriptions")
+```
+
+# Summary Statistics
+
+We will generate summary statistics for three columns: `Projected_SPM`, `Superstar_Prob`, and `Starter_Prob`.
+
+# Subsetting the Data
+```{r}
+# Subset the dataset to include only the columns of interest
+data_pick3 <- select(cleaned_data, Projected_SPM, Superstar_Prob, Starter_Prob)
+```
+
+# Summary of the Subset
+
+```{r, include=TRUE}
+# Produce a summary of the subset
+Summarytable <- summary(data_pick3) # Creates the summary
+Summarytable # Prints the summary in your output
+```
+## Data Visualizations 
+
+## Histogram of superstar probability
+```{r, echo=TRUE}
+# Load necessary library for data visualization
+library(ggplot2)
+
+# Create a histogram of Superstar_Prob
+ggplot(cleaned_data, aes(x = Superstar_Prob)) +
+  geom_histogram(binwidth = 0.05, fill = "blue", color = "black", alpha = 0.7) +
+  labs(title = "Histogram of Superstar Probability",
+       x = "Superstar Probability",
+       y = "Frequency") +
+  theme_minimal()
+```
+
+##Scatterplot of Projected SPM vs. Scatterplot
+```{r, echo=TRUE}
+# Create a scatter plot of Projected_SPM vs. Starter_Prob
+ggplot(cleaned_data, aes(x = Projected_SPM, y = Starter_Prob)) +
+  geom_point() +
+  labs(title = "Scatter Plot of Projected SPM vs. Starter Probability",
+       x = "Projected SPM",
+       y = "Starter Probability") +
+  theme_minimal()
+```
+
